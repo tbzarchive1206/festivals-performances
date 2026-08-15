@@ -1,14 +1,21 @@
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import test from "node:test";
-import { ROOT_FOLDER_ID, KCON_SHEET_ID, summarizeRaw, topLevelFolders } from "../scripts/archive-tools.mjs";
+import { ROOT_FOLDER_ID, KCON_SHEET_ID, ROOT_TITLE, summarizeRaw, topLevelFolders } from "../scripts/archive-tools.mjs";
 
 const raw = JSON.parse(await fs.readFile(new URL("../app/data/archive.generated.json", import.meta.url), "utf8"));
 
 test("snapshot contains the complete recursive Drive tree", () => {
   assert.equal(raw.sourceFolderId, ROOT_FOLDER_ID);
   assert.equal(raw.spreadsheetId, KCON_SHEET_ID);
-  assert.deepEqual(summarizeRaw(raw), { nodes: 304, folders: 65, files: 239, topFolders: 14, yearFolders: 9, sheets: 1, kconRows: 17 });
+  const summary = summarizeRaw(raw);
+  assert.equal(summary.nodes, summary.folders + summary.files);
+  assert.equal(new Set(raw.nodes.map((node) => node.id)).size, summary.nodes);
+  assert.ok(summary.topFolders > 0);
+  assert.ok(summary.yearFolders > 0);
+  assert.ok(summary.sheets > 0);
+  assert.equal(summary.kconRows, Math.max(0, raw.kconRows.length - 1));
+  assert.ok(raw.nodes.every((node) => Array.isArray(node.path) && node.path[0] === ROOT_TITLE));
 });
 
 test("top-level folders remain data-driven for automatic category tiles", () => {

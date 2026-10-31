@@ -8,7 +8,7 @@ test("builds the self-contained Festivals and Performances archive", async () =>
   const scriptName = assets.find((name) => name.endsWith(".js"));
   assert.ok(scriptName, "compiled JavaScript asset is missing");
   const script = await readFile(new URL(`../dist/assets/${scriptName}`, import.meta.url), "utf8");
-  assert.match(html, /FESTIVALS (?:&|&amp;) PERFORMANCES/);
+  assert.match(html, /<title>PERFORMANCES — THE BOYZ ARCHIVE<\/title>/);
   assert.match(html, /\.\/assets\//);
   assert.match(script, /SELECT A COLLECTION/);
   assert.match(script, /SEARCH TITLE OR YYMMDD DATE/);

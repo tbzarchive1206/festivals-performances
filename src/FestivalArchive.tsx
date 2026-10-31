@@ -18,7 +18,7 @@ const memberPatterns: [string, RegExp][] = [
 const categoryRules = [
   { id: "music-shows", title: "MUSIC SHOWS", test: (name: string) => /MUSIC SHOWS/iu.test(name), order: 2 },
   { id: "kcon", title: "KCON", test: (name: string) => /^KCON\b/iu.test(name), order: 3 },
-  { id: "showcases", title: "SHOWCASES & COMEBACK LIVES", test: (name: string) => /SHOWCASES/iu.test(name), order: 4 },
+  { id: "showcases", title: "SHOWCASES", test: (name: string) => /SHOWCASES/iu.test(name), order: 4 },
   { id: "road-to-kingdom", title: "ROAD TO KINGDOM", test: (name: string) => /ROAD TO KINGDOM/iu.test(name), order: 5 },
   { id: "the100", title: "THE100 MINI CONCERT", test: (name: string) => /THE100 MINI CONCERT/iu.test(name), order: 6 },
 ];
@@ -183,7 +183,7 @@ export function FestivalArchive({ data }: { data: RawArchive }) {
 }
 
 function Header({ categories, events, media, updated }: { categories: number; events: number; media: number; updated: string }) {
-  return <header className="masthead"><div className="utility"><a className="brand" href="https://tbzarchive.com/">THE BOYZ / FAN ARCHIVE</a><nav><span>FESTIVALS & PERFORMANCES</span><span>/</span><a href="https://x.com/tbzarchive1206_" target="_blank" rel="noreferrer">TWITTER ↗</a></nav></div><a href="#home"><h1><span className="solid">FESTIVALS &</span><span className="outline">PERFORMANCES</span></h1></a><div className="stats"><p><strong>{categories}</strong> COLLECTIONS</p><i /><p><strong>{events}</strong> EVENTS</p><i /><p><strong>{media.toLocaleString("en-US")}</strong> MEDIA FILES</p><i /><p>UPDATED <strong>{updated}</strong></p></div></header>;
+  return <header className="masthead"><div className="utility"><a className="brand" href="https://tbzarchive.com/">THE BOYZ / FAN ARCHIVE</a><nav><span>PERFORMANCES</span><span>/</span><a href="https://x.com/tbzarchive1206_" target="_blank" rel="noreferrer">TWITTER ↗</a></nav></div><a href="#home"><h1><span className="solid">PERFORMANCES</span></h1></a><div className="stats"><p><strong>{categories}</strong> COLLECTIONS</p><i /><p><strong>{events}</strong> EVENTS</p><i /><p><strong>{media.toLocaleString("en-US")}</strong> MEDIA FILES</p><i /><p>UPDATED <strong>{updated}</strong></p></div></header>;
 }
 
 function Footer({ sourceId }: { sourceId: string }) { return <footer><span>© THE BOYZ FAN ARCHIVE</span><a href={folderUrl(sourceId)} target="_blank" rel="noreferrer">SOURCE FOLDER ↗</a><a href="#top">BACK TO TOP ↑</a></footer>; }

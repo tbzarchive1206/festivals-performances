@@ -28,7 +28,7 @@ const years = unique(performances.map(stage => stage.date.slice(0, 4))).sort().r
 const eras = unique(performances.map(stage => stage.era)).sort((a, b) => eraSortKey(a).localeCompare(eraSortKey(b), "en"));
 const shows = unique(performances.map(stage => stage.show)).sort((a, b) => a.localeCompare(b, "en"));
 const members = [
-  "Eric", "Hyunjae", "Jacob", "Juyeon", "Kevin", "Q", "Sangyeon", "Sunwoo", "Younghoon",
+  "Sangyeon", "Jacob", "Younghoon", "Hyunjae", "Juyeon", "Kevin", "Q", "Sunwoo", "Eric",
   "Hwall", "Ju Haknyeon", "New",
 ];
 const historicalLabels: Record<string, string> = {
@@ -92,6 +92,7 @@ export function MusicShows() {
   }).sort((a, b) => (filters.sort === "old" ? 1 : -1) * a.stage.date.localeCompare(b.stage.date)
     || a.stage.id.localeCompare(b.stage.id));
   const activeRecording = selection?.camera || selection?.stage;
+  const startSeconds = selection?.camera ? undefined : selection?.stage.startSeconds;
 
   return <section className="music-shows" aria-label="Music Shows">
     <header className="music-mast">
@@ -107,7 +108,7 @@ export function MusicShows() {
         {activeRecording?.youtubeId
           ? <iframe className="music-player" key={activeRecording.id}
               title={`${titleOf(selection.stage)} — ${selection.camera?.member || "Main stage"} (YouTube)`}
-              src={`https://www.youtube.com/embed/${activeRecording.youtubeId}?autoplay=1&playsinline=1`}
+              src={`https://www.youtube.com/embed/${activeRecording.youtubeId}?autoplay=1&playsinline=1${startSeconds ? `&start=${startSeconds}` : ""}`}
               allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen
               referrerPolicy="strict-origin-when-cross-origin" />
           : <div className="music-player music-unavailable" role="status">VIDEO UNAVAILABLE</div>}
@@ -155,7 +156,6 @@ export function MusicShows() {
                 onError={event => { event.currentTarget.hidden = true; }}
               />}
               <span className="music-badge music-caption">{camera?.kind || "Stage"}</span>
-              <span className="music-play" aria-hidden="true">{recording.youtubeId ? "▶" : "—"}</span>
             </button>
             <div>
               <div className="music-caption">{stage.date} · {stage.show}</div>

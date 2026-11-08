@@ -149,6 +149,11 @@ export function MusicShows() {
           return <article className="music-entry" key={recording.id}>
             <button type="button" className="music-thumb" aria-label={`Open ${titleOf(stage)} · ${camera?.member || "Main stage"}`}
               onClick={event => open(stage, camera, event.currentTarget)}>
+              {stage.youtubeId && <img
+                src={`https://i.ytimg.com/vi/${stage.youtubeId}/hqdefault.jpg`}
+                alt="" loading="lazy" decoding="async"
+                onError={event => { event.currentTarget.hidden = true; }}
+              />}
               <span className="music-badge music-caption">{camera?.kind || "Stage"}</span>
               <span className="music-play" aria-hidden="true">{recording.youtubeId ? "▶" : "—"}</span>
             </button>

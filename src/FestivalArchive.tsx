@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { MusicShows, musicShowCounts } from "./MusicShows";
 
 type RawNode = { id: string; name: string; mimeType: string; type: "file" | "folder"; size?: string | null; path: string[] };
 export type RawArchive = { generatedAt: string; sourceFolderId: string; spreadsheetId: string; nodes: RawNode[]; kconRows: string[][] };
@@ -56,7 +57,7 @@ function buildArchive(data: RawArchive) {
   for (const rule of categoryRules) {
     const folders = rootFolders.filter((folder) => rule.test(folder.name));
     folders.forEach((folder) => assigned.add(folder.id));
-    if (folders.length) definitions.push({ id: rule.id, title: rule.title, folders, order: rule.order });
+    if (folders.length || rule.id === "music-shows") definitions.push({ id: rule.id, title: rule.title, folders, order: rule.order });
   }
   rootFolders.filter((folder) => !assigned.has(folder.id)).forEach((folder, index) => definitions.push({ id: `auto-${slug(folder.name)}-${folder.id.slice(0, 5)}`, title: cleanTitle(folder.name), folders: [folder], order: 100 + index }));
 
@@ -159,6 +160,10 @@ export function FestivalArchive({ data }: { data: RawArchive }) {
   const goCategory = (id: string) => { location.hash = `category/${id}`; setCategoryFilter("all"); setYearFilter("all"); setTypeFilter("all"); };
   const goEvent = (event: ArchiveEvent) => { location.hash = `event/${event.categoryId}/${event.id}`; };
 
+  if (route.categoryId === "music-shows" && !route.eventId) {
+    return <main id="top"><MusicShows /><Footer sourceId={data.sourceFolderId} /></main>;
+  }
+
   if (selectedEvent) {
     const availableMembers = memberOrder.filter((member) => selectedEvent.media.some((item) => item.members.includes(member)));
     const media = selectedEvent.media.filter((item) => (memberFilter === "all" || item.members.includes(memberFilter)) && (mediaFilter === "all" || item.kind === mediaFilter));
@@ -178,7 +183,7 @@ export function FestivalArchive({ data }: { data: RawArchive }) {
       <div className="search"><span>⌕</span><input value={query} onChange={(event) => { setQuery(event.target.value); setShown(pageSize); }} placeholder="SEARCH TITLE OR YYMMDD DATE…" aria-label="Search archive" />{query && <button className="clear" onClick={() => setQuery("")}>CLEAR</button>}</div>
       <div className="filter-row"><label>COLLECTION<select value={selectedCategory?.id || categoryFilter} onChange={(event) => event.target.value === "all" ? goHome() : goCategory(event.target.value)}><option value="all">ALL COLLECTIONS</option>{archive.categories.map((category) => <option key={category.id} value={category.id}>{category.title}</option>)}</select></label><label>YEAR<select value={yearFilter} onChange={(event) => { setYearFilter(event.target.value); setShown(pageSize); }}><option value="all">ALL YEARS</option>{years.map((year) => <option key={year}>{year}</option>)}</select></label><label>EVENT TYPE<select value={typeFilter} onChange={(event) => { setTypeFilter(event.target.value); setShown(pageSize); }}><option value="all">ALL TYPES</option>{eventTypes.map((type) => <option key={type}>{type}</option>)}</select></label><label>SORT<select value={sort} onChange={(event) => setSort(event.target.value)}><option value="desc">NEWEST FIRST</option><option value="asc">OLDEST FIRST</option></select></label></div>
     </section>
-    {!showResults ? <section className="category-picker"><div className="picker-head"><p>SELECT A COLLECTION · {archive.categories.length} SECTIONS</p><a href={folderUrl(data.sourceFolderId)} target="_blank" rel="noreferrer">OPEN SOURCE FOLDER ↗</a></div><div className="category-grid">{archive.categories.map((category, index) => <button className={category.featured ? "featured" : ""} key={category.id} onClick={() => goCategory(category.id)}><span>{String(index + 1).padStart(2, "0")} / COLLECTION</span><strong>{category.title}</strong><small>{category.events.length} EVENTS · {category.events.reduce((sum, event) => sum + event.media.length, 0)} FILES →</small></button>)}</div></section> : <section className="archive-section"><div className="results-head"><p>{selectedCategory?.title || "SEARCH RESULTS"} · {filtered.length} EVENTS</p><button onClick={goHome}>ALL COLLECTIONS ↑</button></div>{filtered.length ? <div className="cards">{filtered.slice(0, shown).map((event) => <EventCard key={event.id} event={event} open={() => goEvent(event)} />)}</div> : <div className="empty"><strong>NO RESULTS</strong>TRY AN EVENT NAME OR YYMMDD DATE.</div>}{shown < filtered.length && <button className="load-more" onClick={() => setShown((value) => value + pageSize)}>LOAD MORE EVENTS ↓</button>}</section>}
+    {!showResults ? <section className="category-picker"><div className="picker-head"><p>SELECT A COLLECTION · {archive.categories.length} SECTIONS</p><a href={folderUrl(data.sourceFolderId)} target="_blank" rel="noreferrer">OPEN SOURCE FOLDER ↗</a></div><div className="category-grid">{archive.categories.map((category, index) => <button className={category.featured ? "featured" : ""} key={category.id} onClick={() => goCategory(category.id)}><span>{String(index + 1).padStart(2, "0")} / COLLECTION</span><strong>{category.title}</strong><small>{category.id === "music-shows" ? `${musicShowCounts.performances} PERFORMANCES · ${musicShowCounts.fancams.toLocaleString("en-US")} FANCAMS` : `${category.events.length} EVENTS · ${category.events.reduce((sum, event) => sum + event.media.length, 0)} FILES`} →</small></button>)}</div></section> : <section className="archive-section"><div className="results-head"><p>{selectedCategory?.title || "SEARCH RESULTS"} · {filtered.length} EVENTS</p><button onClick={goHome}>ALL COLLECTIONS ↑</button></div>{filtered.length ? <div className="cards">{filtered.slice(0, shown).map((event) => <EventCard key={event.id} event={event} open={() => goEvent(event)} />)}</div> : <div className="empty"><strong>NO RESULTS</strong>TRY AN EVENT NAME OR YYMMDD DATE.</div>}{shown < filtered.length && <button className="load-more" onClick={() => setShown((value) => value + pageSize)}>LOAD MORE EVENTS ↓</button>}</section>}
     <Footer sourceId={data.sourceFolderId} /></main>;
 }
 

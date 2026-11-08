@@ -29,6 +29,9 @@
 .music-unavailable{display:grid;place-items:center;color:var(--white);font:11px "Courier New",monospace}
 .music-shots{display:flex;flex-wrap:wrap;gap:8px;margin-top:7px}
 .music-shots button{padding:7px 9px;font:11px "Courier New",monospace;text-transform:uppercase}
+@media(min-width:721px){
+  .music-recording{width:min(100%,1440px,max(720px,140dvh))}
+}
 @media(max-width:680px){
   .music-shows{padding:12px 12px 45px}
   .music-grid{grid-template-columns:1fr}

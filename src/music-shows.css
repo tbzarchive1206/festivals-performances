@@ -16,8 +16,9 @@
 .music-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px;margin-top:6px;border-top:1px solid}
 .music-entry{min-width:0;display:grid;grid-template-columns:minmax(0,44%) minmax(0,1fr);border-bottom:1px solid;padding:9px 0;gap:12px}
 .music-thumb{min-width:0;min-height:145px;display:grid;place-items:center;position:relative;border:0;background:var(--pale);padding:32px 6px 10px}
+.music-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .music-badge{position:absolute;top:8px;left:8px;background:var(--blue);color:var(--white);padding:3px 6px}
-.music-play{display:grid;place-items:center;width:40px;height:40px;border:1px solid;border-radius:50%;padding-left:2px}
+.music-play{position:relative;display:grid;place-items:center;width:40px;height:40px;border:1px solid;border-radius:50%;padding-left:2px;background:var(--white)}
 .music-entry h2{font:800 clamp(16px,2.5vw,26px)/1 "Arial Narrow",Arial,sans-serif;letter-spacing:-.025em;margin:5px 0 7px;overflow-wrap:anywhere}
 .music-entry .music-caption:not(.music-badge){color:var(--muted);overflow-wrap:anywhere}
 .music-detail{border-top:1px solid;padding-top:8px}
